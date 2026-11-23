@@ -1,6 +1,7 @@
 import ActivityIndicator from '@components/ActivityIndicator';
 import BlockingView from '@components/BlockingViews/BlockingView';
 import FullPageErrorView from '@components/BlockingViews/FullPageErrorView';
+import ChartTooltipClipBoundary from '@components/Charts/components/ChartTooltipClipBoundary';
 import {ChartCaptureContext} from '@components/Charts/context/ChartCaptureContext';
 import NAVIGATION_TABS from '@components/Navigation/NavigationTabBar/NAVIGATION_TABS';
 import TabRootScrollViewMarker from '@components/Navigation/TabBarBottomContent/TabRootScrollViewMarker';
@@ -543,7 +544,10 @@ function InsightsDashboard({dashboardID, accessibleDashboards}: {dashboardID: In
             >
                 <InsightsTagPolicyLoader policyIDs={tagPolicyIDs} />
                 {!shouldScrollMainHeader && header}
-                <View style={styles.flex1}>
+                <ChartTooltipClipBoundary
+                    enabled={!shouldScrollMainHeader}
+                    style={styles.flex1}
+                >
                     <Animated.View
                         key={state}
                         entering={FadeIn.duration(CONST.SEARCH.ANIMATION.FADE_DURATION)}
@@ -578,7 +582,7 @@ function InsightsDashboard({dashboardID, accessibleDashboards}: {dashboardID: In
                             {shouldScrollMainHeader && header}
                         </InsightsDashboardContent>
                     </Animated.View>
-                </View>
+                </ChartTooltipClipBoundary>
             </ScreenWrapper>
         </ChartCaptureContext.Provider>
     );

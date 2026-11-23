@@ -18,11 +18,12 @@ import type {LayoutChangeEvent} from 'react-native';
 import type {DerivedValue, SharedValue} from 'react-native-reanimated';
 
 import {useIsFocused} from '@react-navigation/native';
-import React, {useEffect, useEffectEvent, useState} from 'react';
+import React, {useContext, useEffect, useEffectEvent, useState} from 'react';
 import {View} from 'react-native';
 import Animated, {useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue} from 'react-native-reanimated';
 import {scheduleOnRN} from 'react-native-worklets';
 
+import ChartTooltipClipTopContext from '../context/ChartTooltipClipTopContext';
 import ChartTooltipAnchor from './ChartTooltipAnchor';
 import ChartTooltipPortal from './ChartTooltipPortal';
 
@@ -64,6 +65,7 @@ function ChartTooltip({label, children, chartWidth, initialTooltipPosition, isVi
     const styles = useThemeStyles();
     const {windowWidth, windowHeight} = useWindowDimensions();
     const {top: safeAreaTop, bottom: safeAreaBottom} = useSafeAreaInsets();
+    const shouldClipAtToolbar = useContext(ChartTooltipClipTopContext) !== undefined;
 
     /** Shared value to store the measured width of the tooltip container */
     const tooltipMeasuredWidth = useSharedValue(0);
@@ -166,15 +168,21 @@ function ChartTooltip({label, children, chartWidth, initialTooltipPosition, isVi
         const maxBottom = windowHeight - safeAreaBottom;
         const topAbove = originY + y - height;
         const shiftedLeft = left + PopoverWithMeasuredContentUtils.computeHorizontalShift(left, width, windowWidth);
-        const shiftedTop = topAbove + PopoverWithMeasuredContentUtils.computeVerticalShift(topAbove - minTop, height, maxBottom - minTop, 2 * TOOLTIP_BAR_GAP, true);
+        // Flipping the tooltip at the top of the window would bring it back out from behind the toolbar.
+        const top = shouldClipAtToolbar
+            ? Math.min(maxBottom - height, topAbove)
+            : Math.max(
+                  minTop,
+                  Math.min(maxBottom - height, topAbove + PopoverWithMeasuredContentUtils.computeVerticalShift(topAbove - minTop, height, maxBottom - minTop, 2 * TOOLTIP_BAR_GAP, true)),
+              );
         const isTooltipShown = (isVisible?.get() ?? true) && (isContentCurrent?.get() ?? true) && isOriginMeasured.get() && width > 0;
 
         return {
             left: Math.max(0, Math.min(windowWidth - width, shiftedLeft)),
-            top: Math.max(minTop, Math.min(maxBottom - height, shiftedTop)),
+            top,
             opacity: isTooltipShown ? 1 : 0,
         };
-    }, [initialTooltipPosition, windowWidth, windowHeight, safeAreaTop, safeAreaBottom]);
+    }, [initialTooltipPosition, windowWidth, windowHeight, safeAreaTop, safeAreaBottom, shouldClipAtToolbar]);
 
     const content = (
         <View
