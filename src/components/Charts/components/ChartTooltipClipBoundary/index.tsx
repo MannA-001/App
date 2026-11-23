@@ -1,11 +1,11 @@
 /** Lets a fixed header clip the root tooltip without moving its chart anchor into a new coordinate system. */
+import ChartTooltipClipTopContext from '@components/Charts/context/ChartTooltipClipTopContext';
+
 import {BoundsObserver} from '@react-ng/bounds-observer';
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import type ChartTooltipClipBoundaryProps from './types';
-
-import ChartTooltipClipTopContext from '../../context/ChartTooltipClipTopContext';
 
 function ChartTooltipClipBoundary({children, enabled, style}: ChartTooltipClipBoundaryProps) {
     const [clipTop, setClipTop] = useState<number>();

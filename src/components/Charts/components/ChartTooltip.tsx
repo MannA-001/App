@@ -1,3 +1,4 @@
+import ChartTooltipClipTopContext from '@components/Charts/context/ChartTooltipClipTopContext';
 import {TOOLTIP_BAR_GAP} from '@components/Charts/hooks';
 import {markChartTouch, pinChartTooltip, unpinChartTooltip} from '@components/Charts/utils/pinnedChartTooltip';
 import PressableWithoutFeedback from '@components/Pressable/PressableWithoutFeedback';
@@ -23,7 +24,6 @@ import {View} from 'react-native';
 import Animated, {useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue} from 'react-native-reanimated';
 import {scheduleOnRN} from 'react-native-worklets';
 
-import ChartTooltipClipTopContext from '../context/ChartTooltipClipTopContext';
 import ChartTooltipAnchor from './ChartTooltipAnchor';
 import ChartTooltipPortal from './ChartTooltipPortal';
 
